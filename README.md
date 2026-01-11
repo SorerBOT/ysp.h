@@ -87,4 +87,17 @@ RSP-> | Address: [rbp - 4]                  | <-- RSP points here during the bod
                         |
                   Low Address (e.g., 0x...FFE4)
 ```
-What we can see in this diagram, is that when a function is being called, it first a `Return Address` which is basically the next instruction which needs to be executed after the function invocation is complete. Aferwards, it 
+What we should learn from this diagram is that when a function is being called, it first pushes a `Return Address` which is simply the next instruction which needs to be executed after the function invocation is complete. It was previously stored in the `RIP` register, but we now need it for the current function, so storing it is the only option. We are primarily interested in this value, because if we have the address of an instruction inside a function we can usually lookup the function name using a function like `dladdr`. Additionally, the `RBP` register's role is to keep track of the highest stack-address, meaning the FIRST stack-address owned by the current function, the reason why we use ```asm push rbp``` as the first instruction of the function, is that we are on the brink of starting a new function, and the new function wants to know its limits, particularly what is the highest stack-address it is allowed to interact with and for that it needs to free up the `RBP` register and so as not to lose the previous, or calling function's `RBP`, we simply push it onto the stack. Lastly, the `RSP` register, serves as complementary to the `RBP` pointer, limiting the stack from the bottom, by indicating which is the lowest stack address accessible from the current function.  
+
+Now that we got the rust off our assembly game, we can describe our sampling algorithm, called stack walking:
+1. **Start**: get the current value of `RIP` which is just a register.
+2. **Symbolize**: use `ldaddr` to get the current function's name.
+3. **Stack Walk**:
+    * Read `[RBP+8]` to get the previous `RIP`
+    * Symbolize: use `dladdr` to get the calling function name.
+    * Use `[RBP]` to get the calling function's `RBP`
+4. Repeat until the calling function's `RBP` / `RIP` point to nonesense.
+
+An important note is that we are not actually going to be using `dladdr` throughout the runtime of the program, but we are going to store all the addresses, and parse them using `dladdr` after the entire program finished executing, or something along those lines.
+
+Another important note is that we would have to compile with the `-fno-omit-frame-pointer` flag, as we would not necessarily have `RBP` updated with the bottom of the stack (highest address) available to us otherwise.
