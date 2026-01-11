@@ -47,18 +47,19 @@ global add_numbers
 
 add_numbers:
     ; --- Prologue ---
-    push    rbp             ; Save the caller's base pointer
-    mov     rbp, rsp        ; Set the base pointer to the current stack pointer
+    push    rbp             ; Save caller's base pointer
+    mov     rbp, rsp        ; Set base pointer to current stack
 
     ; --- Body ---
-    mov     rax, rdi        ; Move first argument (RDI) into the accumulator (RAX)
-    add     rax, rsi        ; Add second argument (RSI) to the accumulator (RAX)
-                            ; Result is now in RAX (Destination is FIRST operand)
+    sub     rsp, 4          ; ALLOCATE 4 bytes on the stack for local variable. RSP is now [RBP - 4]
+    mov     [rbp-4], edi    ; Store first arg (EDI) into our local stack variable
+    add     [rbp-4], esi    ; Add second arg (ESI) directly to that stack memory
+    mov     eax, [rbp-4]    ; Move the result from stack into EAX for return
 
     ; --- Epilogue ---
-    mov     rsp, rbp        ; Restore the stack pointer (deallocate locals if any)
-    pop     rbp             ; Restore the caller's base pointer
-    ret                     ; Return control to caller
+    mov     rsp, rbp        ; Restore RSP (effectively freeing the 4 bytes)
+    pop     rbp             ; Restore caller's RBP
+    ret
 ```
 Now the interesting parts here are the prologue its sibling, the epilogue. Their role is quite straightforward once we recall what the `stack` is, conveniently we have the following diagram I borrowed from gemini:
 ```
