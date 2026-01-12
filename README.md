@@ -40,6 +40,7 @@ int heavy_calculation_2(int x)
 If our profiler, ends up sampling while heavy_calculation_2 is being executed, then we would want the sample to resemble the following:  
 `main` -> `heavy_calculation` -> `heavy_calculation_2`  
 But how can we achieve that? STACK WALKING >>>>> ASSEMBLY <<<, COMPUTER ARCHITECTURE, REGISTERS!!111.  
+### Stack Walking
 On a serious note, we do have to recall some assembler for this one, but nothing that even the faintest of hearts wouldn't manage. Firstly, let us recall how a typical function definition looks like in assembly:
 ```asm
 section .text
@@ -101,3 +102,16 @@ Now that we got the rust off our assembly game, we can describe our sampling alg
 An important note is that we are not actually going to be using `dladdr` throughout the runtime of the program, but we are going to store all the addresses, and parse them using `dladdr` after the entire program finished executing, or something along those lines.
 
 Another important note is that we would have to compile with the `-fno-omit-frame-pointer` flag, as we would not necessarily have `RBP` updated with the bottom of the stack (highest address) available to us otherwise.
+
+### Profiling
+Now that we are familiar with the idea of stack walking, the profiling process will simply consist of many-many different samplings. We can look at the following example, let us consider 5 samplings, at 5 different moments throughout our initial program's execution:
+| Timestamp | Call stack |
+| :--- | :--- |
+| 0.1ms | Nil |
+| 0.2ms | main |
+| 0.3ms | main -> heavy_calculation |
+| 0.4ms | main -> heavy_calculation -> heavy_calculation_2|
+| 0.5ms | main -> heavy_calculation |
+| 0.6ms | main |
+| 0.7ms | Nil |
+
