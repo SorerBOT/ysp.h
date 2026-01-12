@@ -104,7 +104,7 @@ An important note is that we are not actually going to be using `dladdr` through
 Another important note is that we would have to compile with the `-fno-omit-frame-pointer` flag, as we would not necessarily have `RBP` updated with the bottom of the stack (highest address) available to us otherwise.
 
 ### Profiling
-Now that we are familiar with the idea of stack walking, the profiling process will simply consist of many-many different samplings. We can look at the following example, let us consider 5 samplings, at 5 different moments throughout our initial program's execution:
+Now that we are familiar with the idea of stack walking, the profiling process will simply consist of many-many different samplings. We can look at the following example, let us consider 7 samplings, at 7 different moments throughout our initial program's execution:
 | Timestamp | Call stack |
 | :--- | :--- |
 | 0.1ms | Nil |
@@ -115,3 +115,5 @@ Now that we are familiar with the idea of stack walking, the profiling process w
 | 0.6ms | main |
 | 0.7ms | Nil |
 
+Looking at these samplings, we can calculate how long it took for each function to complete, we do so by subtracting the first timestamp, at which the function appears from the first timestamp where the function no longer appears. For example, we can calculate main's runtime using this formula:
+$\text{main runtime} = 0.7 - 0.2 = 0.5$.  
