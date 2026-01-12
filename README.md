@@ -97,7 +97,7 @@ Now that we got the rust off our assembly game, we can describe our sampling alg
     * Read `[RBP+8]` to get the previous `RIP`
     * Symbolize: use `dladdr` to get the calling function name.
     * Use `[RBP]` to get the calling function's `RBP`
-4. Repeat until the calling function's `RBP` / `RIP` point to nonesense.
+4. **Repeat**: until the calling function's `RBP` / `RIP` point to nonesense.
 
 An important note is that we are not actually going to be using `dladdr` throughout the runtime of the program, but we are going to store all the addresses, and parse them using `dladdr` after the entire program finished executing, or something along those lines.
 
