@@ -38,19 +38,30 @@ void func4()
     printf("rip_unsigned = %p\n", pc);
     printf("Current executing function %s\n", info.dli_sname);
 
+    info = (Dl_info){0};
     void* rbp_signed = __builtin_frame_address(0);
     void* rbp = ptrauth_strip(rbp_signed, ptrauth_key_frame_pointer);
     void** rip_signed_ptr = (void**)((char*)rbp + 8);
     void* rip_signed = *rip_signed_ptr;
     void* rip = ptrauth_strip(rip_signed, ptrauth_key_return_address);
-
     info = (Dl_info){0};
     dladdr(rip, &info);
     printf("rbp_signed = %p\n", rbp_signed);
-    printf("rbp_unsigned = %p\n", rbp);
     printf("rip_signed = %p\n", rip_signed);
-    printf("rip_unsigned = %p\n", rip);
-    printf("Current executing function %s\n", info.dli_sname);
+
+    do
+    {
+        printf("rbp = %p\n", rbp);
+        printf("rip = %p\n", rip);
+        printf("Current executing function %s\n", info.dli_sname);
+
+        rbp_signed = *((void**)rbp);
+        rbp = ptrauth_strip(rbp_signed, ptrauth_key_frame_pointer);
+        rip_signed = *(void**)((char*)rbp + 8);
+        rip = ptrauth_strip(rip_signed, ptrauth_key_return_address);
+        info = (Dl_info){0};
+        dladdr(rip, &info);
+    } while (info.dli_sname != NULL);
 }
 
 int main(void)
