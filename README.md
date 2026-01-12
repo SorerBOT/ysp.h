@@ -117,3 +117,5 @@ Now that we are familiar with the idea of stack walking, the profiling process w
 
 Looking at these samplings, we can calculate how long it took for each function to complete, we do so by subtracting the first timestamp, at which the function appears from the first timestamp where the function no longer appears. For example, we can calculate main's runtime using this formula:
 $\text{main runtime} = 0.7 - 0.2 = 0.5$.  
+
+This is the gist of the idea, we of course, have to be a tiny bit more sophisticated in order to be able to calculate how much of each function's execution time was a direct cause of a different function's execution time, like in the example we'd like to attribute some of `main`'s long execution time to the 0.2 seconds it spent calling `heavy_calculation`.
