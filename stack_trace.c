@@ -96,16 +96,12 @@ int main(void)
         return 1;
     }
 
-    // 2. Configure the timer
-    // The timer will expire after 500,000 microseconds (0.5 seconds)
     timer.it_value.tv_sec = 0;
-    timer.it_value.tv_usec = 500000;
+    timer.it_value.tv_usec = 0;
 
-    // And reset to this interval every time it expires
     timer.it_interval.tv_sec = 0;
     timer.it_interval.tv_usec = 200;
 
-    // 3. Start the timer using ITIMER_PROF
     if (setitimer(ITIMER_PROF, &timer, NULL) == -1) {
         perror("Error: setitimer");
         return 1;

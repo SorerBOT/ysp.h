@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <ptrauth.h>
 #include <dlfcn.h>
+#include <signal.h>
+#include <sys/time.h>
 
 void print_stack_trace()
 {
@@ -27,9 +29,14 @@ void print_stack_trace()
         printf("Called by function: %s\n", info.dli_sname);
     } while (info.dli_sname != NULL);
 }
+
 void shalom3()
 {
-    print_stack_trace();
+    int x = 0;
+    while (1)
+    {
+        ++x;
+    }
 }
 void shalom2()
 {
@@ -43,6 +50,16 @@ void shalom()
 
 int main(void)
 {
+    struct sigaction act;
+    act.sa_handler = print_stack_trace;
+
+    sigaction(SIGPROF, &act, NULL);
+
+    struct itimerval timer_val = {0};
+    timer_val.it_value.tv_sec = 1;
+    timer_val.it_interval.tv_sec = 1;
+    setitimer(ITIMER_PROF, &timer_val, NULL);
+
     shalom();
     return 0;
 }
