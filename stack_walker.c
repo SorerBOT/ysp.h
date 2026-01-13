@@ -1,20 +1,30 @@
+
 #include <stdio.h>
 #include <ptrauth.h>
 #include <dlfcn.h>
 #include <signal.h>
 #include <sys/time.h>
 
-void print_stack_trace()
+void print_stack_trace(int signal, struct __siginfo * sig_info,
+	    void * context)
 {
+    ucontext_t *uc = (ucontext_t *)context;
+    void* rip_a = (void*) uc->uc_mcontext->__ss.__pc;
+    void* rip_a_unsigned = ptrauth_strip(rip_a, ptrauth_key_return_address);
+
+    Dl_info info = {0};
+    dladdr(rip_a_unsigned, &info);
+
+    printf("Currently executing function: %s\n", info.dli_sname);
+
     void* rbp_signed = __builtin_frame_address(0);
     void* rbp = ptrauth_strip(rbp_signed, ptrauth_key_frame_pointer);
 
     void* rip_signed = *(void**)((char*)rbp + 8);
     void* rip = ptrauth_strip(rip_signed, ptrauth_key_return_address);
 
-    Dl_info info = {0};
+    info = (Dl_info ){0};
     dladdr(rip, &info);
-    printf("Currently executing function: %s\n", info.dli_sname);
 
     do
     {
@@ -51,7 +61,7 @@ void shalom()
 int main(void)
 {
     struct sigaction act;
-    act.sa_handler = print_stack_trace;
+    act.sa_sigaction = print_stack_trace;
 
     sigaction(SIGPROF, &act, NULL);
 
