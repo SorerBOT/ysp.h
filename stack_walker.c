@@ -1,19 +1,18 @@
-
 #include <stdio.h>
 #include <ptrauth.h>
 #include <dlfcn.h>
 #include <signal.h>
 #include <sys/time.h>
 
-void print_stack_trace(int signal, struct __siginfo * sig_info,
-	    void * context)
+void print_stack_trace(int signo, struct __siginfo * siginfo, void * ctx)
 {
-    ucontext_t *uc = (ucontext_t *)context;
-    void* rip_a = (void*) uc->uc_mcontext->__ss.__pc;
-    void* rip_a_unsigned = ptrauth_strip(rip_a, ptrauth_key_return_address);
+
+    ucontext_t* uctx = (ucontext_t*) ctx;
+    void* uctx_rip_signed = (void*) uctx->uc_mcontext->__ss.__pc;
+    void* uctx_rip = ptrauth_strip(uctx_rip_signed, ptrauth_key_return_address);
 
     Dl_info info = {0};
-    dladdr(rip_a_unsigned, &info);
+    dladdr(uctx_rip, &info);
 
     printf("Currently executing function: %s\n", info.dli_sname);
 
@@ -39,10 +38,9 @@ void print_stack_trace(int signal, struct __siginfo * sig_info,
         printf("Called by function: %s\n", info.dli_sname);
     } while (info.dli_sname != NULL);
 }
-
 void shalom3()
 {
-    int x = 0;
+    int x;
     while (1)
     {
         ++x;
@@ -60,16 +58,19 @@ void shalom()
 
 int main(void)
 {
-    struct sigaction act;
+    struct sigaction act = {0};
     act.sa_sigaction = print_stack_trace;
-
     sigaction(SIGPROF, &act, NULL);
 
-    struct itimerval timer_val = {0};
-    timer_val.it_value.tv_sec = 1;
-    timer_val.it_interval.tv_sec = 1;
-    setitimer(ITIMER_PROF, &timer_val, NULL);
+    struct itimerval time_val = {0};
+    time_val.it_value.tv_sec = 1;
+    time_val.it_interval.tv_sec = 1;
+    setitimer(ITIMER_PROF, &time_val, NULL);
 
     shalom();
+
+
+
+
     return 0;
 }
