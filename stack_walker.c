@@ -5,6 +5,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <time.h>
 
 #define YSP_TIMER_HZ_99_MICRO_SECOND 10101
 
@@ -65,23 +66,22 @@ void print_stack_trace(int signo, struct __siginfo * siginfo, void * ctx)
 
     profiler->samples_offset += sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*);
 }
-double calc_pi()
+void busy_wait_5_seconds()
 {
-    long long iterations = 1000000; // Needs many iterations!
-    double pi_approx = 0.0;
-    double sign = 1.0; // For alternating signs
+    time_t initial_time = time(NULL);
 
-    for (long long i = 0; i < iterations; i++) {
-        pi_approx += sign * (4.0 / (2.0 * i + 1.0));
-        sign *= -1.0; // Alternate sign for next term
+    while (1)
+    {
+        if (time(NULL) - initial_time > 5)
+        {
+            break;
+        }
     }
-
-    return pi_approx;
 }
 
 void shalom3()
 {
-    printf("PI = %lf\n", calc_pi());
+    busy_wait_5_seconds();
 }
 void shalom2()
 {
@@ -116,8 +116,8 @@ int main(void)
     sigaction(SIGPROF, &act, NULL);
 
     struct itimerval time_val = {0};
-    time_val.it_value.tv_usec = YSP_TIMER_HZ_99_MICRO_SECOND / 10;
-    time_val.it_interval.tv_usec = YSP_TIMER_HZ_99_MICRO_SECOND / 10;
+    time_val.it_value.tv_usec = YSP_TIMER_HZ_99_MICRO_SECOND;
+    time_val.it_interval.tv_usec = YSP_TIMER_HZ_99_MICRO_SECOND;
     setitimer(ITIMER_PROF, &time_val, NULL);
 
     shalom();
@@ -133,7 +133,7 @@ int main(void)
             printf("func: %s\n", info.dli_sname);
         }
 
-        sample = sample + (sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*));
+        sample = (ysp_sample_t*)(((char*)sample) + (sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*)));
     }
 
     return 0;
