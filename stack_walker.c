@@ -28,7 +28,7 @@ ysp_profiler_data_t* profiler = NULL;
 
 void print_stack_trace(int signo, struct __siginfo * siginfo, void * ctx)
 {
-    ysp_sample_t* sample = (ysp_instruction_t*)(((char*)profiler->samples) + profiler->samples_offset);
+    ysp_sample_t* sample = (ysp_sample_t*)(((char*)profiler->samples) + profiler->samples_offset);
     *sample = (ysp_sample_t)
     {
         .depth = 0
@@ -93,6 +93,20 @@ void shalom()
     shalom2();
 }
 
+int ysp_compare_samples(const void* first, const void* second)
+{
+    const ysp_sample_t* first_sample = (const ysp_sample_t*)first;
+    const ysp_sample_t* second_sample = (const ysp_sample_t*)second;
+
+    if (first_sample->depth == second_sample->depth)
+    {
+        for (size_t i = 0; i < first_sample->depth; ++i)
+        {
+            if (first_sample->instructions[i] != second_sample->instructions[])
+        }
+    }
+}
+
 int main(void)
 {
     profiler = mmap(NULL, 1000 * 1000 * sizeof(char),
@@ -122,19 +136,18 @@ int main(void)
 
     shalom();
 
+    size_t sample_ptrs_count = 0;
+    ysp_sample_t** sample_ptrs = (ysp_sample_t**)(((char*)profiler->samples) + profiler->samples_offset + 1);
+
     ysp_sample_t* sample = profiler->samples;
     void* last_addr = ((char*)sample) + profiler->samples_offset;
     while (sample < (ysp_sample_t*)last_addr)
     {
-        for (size_t i = 0; i < sample->depth; ++i)
-        {
-            Dl_info info = {0};
-            dladdr(sample->instructions[i], &info);
-            printf("func: %s\n", info.dli_sname);
-        }
-
+        sample_ptrs[sample_ptrs_count] = sample;
+        sample_ptrs_count++;
         sample = (ysp_sample_t*)(((char*)sample) + (sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*)));
     }
 
+    //qsort(sample_ptrs, sample_ptrs_count, sizeof(ysp_sample_t*), );
     return 0;
 }
