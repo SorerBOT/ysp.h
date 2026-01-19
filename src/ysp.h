@@ -1,3 +1,5 @@
+#ifdef YSP_IMPLEMENTATION
+
 #include <stdio.h>
 #include <ptrauth.h>
 #include <dlfcn.h>
@@ -5,11 +7,10 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <sys/mman.h>
-#include <time.h>
 #include <string.h>
 
 #define HASH_IMPLEMENTATION
-#include "external/hash.h"
+#include "../external/hash.h"
 
 #define YSP_TIMER_HZ_99_MICRO_SECOND 10101
 
@@ -28,75 +29,14 @@ typedef struct
     ysp_sample_t samples[];
 } ysp_profiler_data_t;
 
-ysp_profiler_data_t* profiler = NULL;
+static ysp_profiler_data_t* profiler = NULL;
 
-void print_stack_trace(int signo, struct __siginfo * siginfo, void * ctx)
-{
-    ysp_sample_t* sample = (ysp_sample_t*)(((char*)profiler->samples) + profiler->samples_offset);
-    *sample = (ysp_sample_t)
-    {
-        .depth = 0
-    };
+static void ysp_setup(void);
+static void ysp_calculate_results(void);
+static void ysp_take_sample(int signo, struct __siginfo * siginfo, void * ctx);
 
-    ucontext_t* uctx = (ucontext_t*) ctx;
-    ysp_instruction_t* uctx_rip_signed = (ysp_instruction_t*) uctx->uc_mcontext->__ss.__pc;
-    ysp_instruction_t* uctx_rip = ptrauth_strip(uctx_rip_signed, ptrauth_key_return_address);
-
-    sample->instructions[sample->depth] = uctx_rip;
-    sample->depth++;
-
-    ysp_instruction_t* rbp_signed = __builtin_frame_address(0);
-    ysp_instruction_t* rbp = ptrauth_strip(rbp_signed, ptrauth_key_frame_pointer);
-
-    ysp_instruction_t* rip_signed = *(ysp_instruction_t**)((char*)rbp + 8);
-    ysp_instruction_t* rip = ptrauth_strip(rip_signed, ptrauth_key_return_address);
-
-    while (1)
-    {
-        ysp_instruction_t* calling_rbp_signed = *((ysp_instruction_t**) rbp);
-        rbp = ptrauth_strip(calling_rbp_signed, ptrauth_key_frame_pointer);
-
-        if (rbp == NULL)
-        {
-            break;
-        }
-
-        ysp_instruction_t* calling_rip_signed = *(ysp_instruction_t**)((char*)rbp + 8);
-        ysp_instruction_t* calling_rip = ptrauth_strip(calling_rip_signed, ptrauth_key_return_address);
-
-        sample->instructions[sample->depth] = calling_rip;
-        sample->depth++;
-    }
-
-    profiler->samples_offset += sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*);
-}
-void busy_wait_5_seconds()
-{
-    time_t initial_time = time(NULL);
-
-    while (1)
-    {
-        if (time(NULL) - initial_time > 5)
-        {
-            break;
-        }
-    }
-}
-
-void shalom3()
-{
-    busy_wait_5_seconds();
-}
-void shalom2()
-{
-    shalom3();
-}
-void shalom()
-{
-    shalom2();
-}
-
-int main(void)
+__attribute__((constructor))
+static void ysp_setup(void)
 {
     profiler = mmap(NULL, 1024 * 1024 * sizeof(char),
             PROT_READ | PROT_WRITE,
@@ -115,16 +55,18 @@ int main(void)
     };
 
     struct sigaction act = {0};
-    act.sa_sigaction = print_stack_trace;
+    act.sa_sigaction = ysp_take_sample;
     sigaction(SIGPROF, &act, NULL);
 
     struct itimerval time_val = {0};
     time_val.it_value.tv_usec = YSP_TIMER_HZ_99_MICRO_SECOND;
     time_val.it_interval.tv_usec = YSP_TIMER_HZ_99_MICRO_SECOND;
     setitimer(ITIMER_PROF, &time_val, NULL);
+}
 
-    shalom();
-
+__attribute__((destructor))
+static void ysp_calculate_results(void)
+{
     hash_table_t* table = hash_init(NULL);
 
     ysp_sample_t* sample = profiler->samples;
@@ -221,9 +163,50 @@ int main(void)
         hash_key_value_t key_value = all_key_values[i];
         fprintf(file, "%s %lu\n", (char*)key_value.key, *((size_t*)key_value.value));
     }
-
     fclose(file);
     free(all_key_values);
-
-    return 0;
+    hash_free(table);
 }
+
+static void ysp_take_sample(int signo, struct __siginfo * siginfo, void * ctx)
+{
+    ysp_sample_t* sample = (ysp_sample_t*)(((char*)profiler->samples) + profiler->samples_offset);
+    *sample = (ysp_sample_t)
+    {
+        .depth = 0
+    };
+
+    ucontext_t* uctx = (ucontext_t*) ctx;
+    ysp_instruction_t* uctx_rip_signed = (ysp_instruction_t*) uctx->uc_mcontext->__ss.__pc;
+    ysp_instruction_t* uctx_rip = ptrauth_strip(uctx_rip_signed, ptrauth_key_return_address);
+
+    sample->instructions[sample->depth] = uctx_rip;
+    sample->depth++;
+
+    ysp_instruction_t* rbp_signed = __builtin_frame_address(0);
+    ysp_instruction_t* rbp = ptrauth_strip(rbp_signed, ptrauth_key_frame_pointer);
+
+    ysp_instruction_t* rip_signed = *(ysp_instruction_t**)((char*)rbp + 8);
+    ysp_instruction_t* rip = ptrauth_strip(rip_signed, ptrauth_key_return_address);
+
+    while (1)
+    {
+        ysp_instruction_t* calling_rbp_signed = *((ysp_instruction_t**) rbp);
+        rbp = ptrauth_strip(calling_rbp_signed, ptrauth_key_frame_pointer);
+
+        if (rbp == NULL)
+        {
+            break;
+        }
+
+        ysp_instruction_t* calling_rip_signed = *(ysp_instruction_t**)((char*)rbp + 8);
+        ysp_instruction_t* calling_rip = ptrauth_strip(calling_rip_signed, ptrauth_key_return_address);
+
+        sample->instructions[sample->depth] = calling_rip;
+        sample->depth++;
+    }
+
+    profiler->samples_offset += sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*);
+}
+
+#endif /* YSP_IMPLEMENTATION */
