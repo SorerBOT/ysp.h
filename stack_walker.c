@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <time.h>
+#include <string.h>
 
 #define YSP_TIMER_HZ_99_MICRO_SECOND 10101
 
@@ -93,20 +94,6 @@ void shalom()
     shalom2();
 }
 
-int ysp_compare_samples(const void* first, const void* second)
-{
-    const ysp_sample_t* first_sample = (const ysp_sample_t*)first;
-    const ysp_sample_t* second_sample = (const ysp_sample_t*)second;
-
-    if (first_sample->depth == second_sample->depth)
-    {
-        for (size_t i = 0; i < first_sample->depth; ++i)
-        {
-            if (first_sample->instructions[i] != second_sample->instructions[])
-        }
-    }
-}
-
 int main(void)
 {
     profiler = mmap(NULL, 1000 * 1000 * sizeof(char),
@@ -136,18 +123,70 @@ int main(void)
 
     shalom();
 
-    size_t sample_ptrs_count = 0;
-    ysp_sample_t** sample_ptrs = (ysp_sample_t**)(((char*)profiler->samples) + profiler->samples_offset + 1);
+    size_t sample_stringified_size = 2048;
+    size_t sample_stringified_offset = 0;
+    char* sample_stringified = calloc(sample_stringified_size, sizeof(char));
+    if (sample_stringified == NULL)
+    {
+        perror("YSP: calloc()\n");
+        exit(EXIT_FAILURE);
+    }
+
 
     ysp_sample_t* sample = profiler->samples;
     void* last_addr = ((char*)sample) + profiler->samples_offset;
     while (sample < (ysp_sample_t*)last_addr)
     {
-        sample_ptrs[sample_ptrs_count] = sample;
-        sample_ptrs_count++;
+        size_t i = sample->depth;
+        memset(sample_stringified, '\0', 2048);
+
+        while (true)
+        {
+            --i;
+            Dl_info info = {0};
+            dladdr(sample->instructions[i], &info);
+            if (info.dli_sname == NULL)
+            {
+                continue;
+            }
+            size_t func_name_len = strlen(info.dli_sname);
+            size_t extra_space_for_delimiter = (sample_stringified_offset == 0)
+                ? 0
+                : 1;
+
+            while (sample_stringified_offset
+                    + func_name_len
+                    + extra_space_for_delimiter >= sample_stringified_size)
+            {
+                sample_stringified_size *= 2;
+                sample_stringified = realloc(sample_stringified, sample_stringified_size);
+                if (sample_stringified == NULL)
+                {
+                    perror("YSP: realloc()\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            if (extra_space_for_delimiter)
+            {
+                sample_stringified[sample_stringified_offset] = ';';
+                sample_stringified[sample_stringified_offset + 1] = '\0';
+                sample_stringified_offset += 1;
+            }
+            strcat(sample_stringified, info.dli_sname);
+            sample_stringified_offset += func_name_len;
+
+            if (i == 0)
+            {
+                break;
+            }
+        }
+        printf("%s\n", sample_stringified);
+        memset(sample_stringified, '\0', sample_stringified_size);
+        sample_stringified_offset = 0;
+
         sample = (ysp_sample_t*)(((char*)sample) + (sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*)));
     }
 
-    //qsort(sample_ptrs, sample_ptrs_count, sizeof(ysp_sample_t*), );
     return 0;
 }
