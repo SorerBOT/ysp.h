@@ -201,6 +201,7 @@ int main(void)
             size_t* new_value = malloc(sizeof(size_t));
             *new_value = *value + 1;
             hash_set(table, sample_stringified, new_value);
+            free(sample_stringified);
         }
 
         sample = (ysp_sample_t*)(((char*)sample) + (sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*)));
