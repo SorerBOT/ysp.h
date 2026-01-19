@@ -1,0 +1,10 @@
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;time;fesetenv 94
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;time;fegetenv 34
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;busy_wait_5_seconds;time 2
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;time;gettimeofday;__gettimeofday 244
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;time 9
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;busy_wait_5_seconds 2
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;time;gettimeofday;__commpage_gettimeofday_internal;mach_absolute_time 79
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;time;gettimeofday;__commpage_gettimeofday_internal;__commpage_gettimeofday_internal 23
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;time;__commpage_gettimeofday_internal 3
+start;main;shalom;shalom2;shalom3;busy_wait_5_seconds;time;gettimeofday 9

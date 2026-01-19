@@ -93,7 +93,6 @@ void shalom2()
 }
 void shalom()
 {
-    printf("SHALOM\n");
     shalom2();
 }
 
@@ -126,15 +125,6 @@ int main(void)
 
     shalom();
 
-    size_t sample_stringified_size = 2048;
-    size_t sample_stringified_offset = 0;
-    char* sample_stringified = calloc(sample_stringified_size, sizeof(char));
-    if (sample_stringified == NULL)
-    {
-        perror("YSP: calloc()\n");
-        exit(EXIT_FAILURE);
-    }
-
     hash_table_t* table = hash_init(NULL);
 
     ysp_sample_t* sample = profiler->samples;
@@ -142,7 +132,15 @@ int main(void)
     while (sample < (ysp_sample_t*)last_addr)
     {
         size_t i = sample->depth;
-        memset(sample_stringified, '\0', 2048);
+
+        size_t sample_stringified_size = 2048;
+        size_t sample_stringified_offset = 0;
+        char* sample_stringified = calloc(sample_stringified_size, sizeof(char));
+        if (sample_stringified == NULL)
+        {
+            perror("YSP: calloc()\n");
+            exit(EXIT_FAILURE);
+        }
 
         while (i > 0)
         {
@@ -205,21 +203,23 @@ int main(void)
             hash_set(table, sample_stringified, new_value);
         }
 
-        memset(sample_stringified, '\0', sample_stringified_size);
-        sample_stringified_offset = 0;
-
         sample = (ysp_sample_t*)(((char*)sample) + (sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*)));
     }
-    free(sample_stringified);
 
     hash_key_value_t* all_key_values = hash_get_all_key_values(table);
+
+    FILE* file = fopen("profiler.output.txt", "w");
+    if (file == NULL)
+    {
+        perror("YSP: fopen()\n");
+        exit(EXIT_FAILURE);
+    }
 
     for (size_t i = 0; i < table->current_occupancy; ++i)
     {
         hash_key_value_t key_value = all_key_values[i];
-        printf("%s: %lu\n", key_value.key, *((size_t*)key_value.value));
+        fprintf(file, "%s %lu\n", (char*)key_value.key, *((size_t*)key_value.value));
     }
-
 
     free(all_key_values);
 
