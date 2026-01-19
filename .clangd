@@ -1,0 +1,9 @@
+CompileFlags:
+  Add: 
+    - -x
+    - c
+    - -std=c99
+    - -DYSP_IMPLEMENTATION
+    - -Iexternal
+    - -Iinclude
+
