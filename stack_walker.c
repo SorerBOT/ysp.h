@@ -221,6 +221,7 @@ int main(void)
         fprintf(file, "%s %lu\n", (char*)key_value.key, *((size_t*)key_value.value));
     }
 
+    fclose(file);
     free(all_key_values);
 
     return 0;
