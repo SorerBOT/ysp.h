@@ -8,6 +8,9 @@
 #include <time.h>
 #include <string.h>
 
+#define HASH_IMPLEMENTATION
+#include "external/hash.h"
+
 #define YSP_TIMER_HZ_99_MICRO_SECOND 10101
 
 typedef void ysp_instruction_t;
@@ -96,7 +99,7 @@ void shalom()
 
 int main(void)
 {
-    profiler = mmap(NULL, 1000 * 1000 * sizeof(char),
+    profiler = mmap(NULL, 1024 * 1024 * sizeof(char),
             PROT_READ | PROT_WRITE,
             MAP_SHARED | MAP_ANON,
             0, 0);
@@ -132,6 +135,7 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
+    hash_table_t* table = hash_init(NULL);
 
     ysp_sample_t* sample = profiler->samples;
     void* last_addr = ((char*)sample) + profiler->samples_offset;
@@ -140,7 +144,7 @@ int main(void)
         size_t i = sample->depth;
         memset(sample_stringified, '\0', 2048);
 
-        while (true)
+        while (i > 0)
         {
             --i;
             Dl_info info = {0};
@@ -181,12 +185,43 @@ int main(void)
                 break;
             }
         }
-        printf("%s\n", sample_stringified);
+        
+        const size_t* value = (const size_t*) hash_get(table, sample_stringified);
+        if (value == NULL)
+        {
+            size_t* new_value = malloc(sizeof(size_t));
+            if (new_value == NULL)
+            {
+                perror("YSP: malloc()\n");
+                exit(EXIT_FAILURE);
+            }
+            *new_value = 1;
+            hash_set(table, sample_stringified, new_value);
+        }
+        else
+        {
+            size_t* new_value = malloc(sizeof(size_t));
+            *new_value = *value + 1;
+            hash_set(table, sample_stringified, new_value);
+        }
+
         memset(sample_stringified, '\0', sample_stringified_size);
         sample_stringified_offset = 0;
 
         sample = (ysp_sample_t*)(((char*)sample) + (sizeof(ysp_sample_t) + sample->depth * sizeof(ysp_instruction_t*)));
     }
+    free(sample_stringified);
+
+    hash_key_value_t* all_key_values = hash_get_all_key_values(table);
+
+    for (size_t i = 0; i < table->current_occupancy; ++i)
+    {
+        hash_key_value_t key_value = all_key_values[i];
+        printf("%s: %lu\n", key_value.key, *((size_t*)key_value.value));
+    }
+
+
+    free(all_key_values);
 
     return 0;
 }
