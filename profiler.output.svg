@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" width="1200" height="246" onload="init(evt)" viewBox="0 0 1200 246" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg version="1.1" width="1200" height="230" onload="init(evt)" viewBox="0 0 1200 230" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <!-- Flame graph stack visualization. See https://github.com/brendangregg/FlameGraph for latest version, and http://www.brendangregg.com/flamegraphs.html for examples. -->
 <!-- NOTES:  -->
 <defs>
@@ -422,81 +422,161 @@
 	}
 ]]>
 </script>
-<rect x="0.0" y="0" width="1200.0" height="246.0" fill="url(#background)"  />
+<rect x="0.0" y="0" width="1200.0" height="230.0" fill="url(#background)"  />
 <text id="title" x="600.00" y="24" >Flame Graph</text>
-<text id="details" x="10.00" y="229" > </text>
+<text id="details" x="10.00" y="213" > </text>
 <text id="unzoom" x="10.00" y="24" class="hide">Reset Zoom</text>
 <text id="search" x="1090.00" y="24" >Search</text>
 <text id="ignorecase" x="1174.00" y="24" >ic</text>
-<text id="matched" x="1090.00" y="229" > </text>
+<text id="matched" x="1090.00" y="213" > </text>
 <g id="frames">
 <g >
-<title>shalom3 (376 samples, 100.00%)</title><rect x="10.0" y="117" width="1180.0" height="15.0" fill="rgb(223,87,20)" rx="2" ry="2" />
-<text  x="13.00" y="127.5" >shalom3</text>
+<title>fesetenv (107 samples, 3.80%)</title><rect x="957.9" y="69" width="44.9" height="15.0" fill="rgb(232,125,29)" rx="2" ry="2" />
+<text  x="960.94" y="79.5" >fese..</text>
 </g>
 <g >
-<title>busy_wait_5_seconds (376 samples, 100.00%)</title><rect x="10.0" y="101" width="1180.0" height="15.0" fill="rgb(242,171,41)" rx="2" ry="2" />
-<text  x="13.00" y="111.5" >busy_wait_5_seconds</text>
+<title>time (397 samples, 14.09%)</title><rect x="937.8" y="85" width="166.3" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="940.83" y="95.5" >time</text>
 </g>
 <g >
-<title>__commpage_gettimeofday_internal (7 samples, 1.86%)</title><rect x="512.1" y="37" width="22.0" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
-<text  x="515.13" y="47.5" >_..</text>
+<title>main (2,817 samples, 100.00%)</title><rect x="10.0" y="149" width="1180.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
+<text  x="13.00" y="159.5" >main</text>
 </g>
 <g >
-<title>mach_absolute_time (62 samples, 16.49%)</title><rect x="534.1" y="37" width="194.6" height="15.0" fill="rgb(234,137,32)" rx="2" ry="2" />
-<text  x="537.10" y="47.5" >mach_absolute_time</text>
+<title>backprop (2,207 samples, 78.35%)</title><rect x="10.0" y="117" width="924.5" height="15.0" fill="rgb(222,81,19)" rx="2" ry="2" />
+<text  x="13.00" y="127.5" >backprop</text>
 </g>
 <g >
-<title>main (376 samples, 100.00%)</title><rect x="10.0" y="165" width="1180.0" height="15.0" fill="rgb(243,179,42)" rx="2" ry="2" />
-<text  x="13.00" y="175.5" >main</text>
+<title>busy_wait (405 samples, 14.38%)</title><rect x="934.5" y="101" width="169.6" height="15.0" fill="rgb(213,38,9)" rx="2" ry="2" />
+<text  x="937.48" y="111.5" >busy_wait</text>
 </g>
 <g >
-<title>__commpage_gettimeofday_internal (69 samples, 18.35%)</title><rect x="512.1" y="53" width="216.6" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
-<text  x="515.13" y="63.5" >__commpage_gettimeofday_inte..</text>
+<title>__gettimeofday (73 samples, 2.59%)</title><rect x="1159.4" y="69" width="30.6" height="15.0" fill="rgb(254,228,54)" rx="2" ry="2" />
+<text  x="1162.42" y="79.5" >__..</text>
 </g>
 <g >
-<title>gettimeofday (1 samples, 0.27%)</title><rect x="19.4" y="85" width="3.2" height="15.0" fill="rgb(231,124,29)" rx="2" ry="2" />
-<text  x="22.41" y="95.5" ></text>
+<title>gettimeofday (242 samples, 8.59%)</title><rect x="1002.8" y="69" width="101.3" height="15.0" fill="rgb(231,124,29)" rx="2" ry="2" />
+<text  x="1005.76" y="79.5" >gettimeofday</text>
 </g>
 <g >
-<title>shalom2 (376 samples, 100.00%)</title><rect x="10.0" y="133" width="1180.0" height="15.0" fill="rgb(230,116,27)" rx="2" ry="2" />
-<text  x="13.00" y="143.5" >shalom2</text>
+<title>fesetenv (590 samples, 20.94%)</title><rect x="154.9" y="69" width="247.2" height="15.0" fill="rgb(232,125,29)" rx="2" ry="2" />
+<text  x="157.93" y="79.5" >fesetenv</text>
 </g>
 <g >
-<title>__gettimeofday (147 samples, 39.10%)</title><rect x="728.7" y="53" width="461.3" height="15.0" fill="rgb(254,228,54)" rx="2" ry="2" />
-<text  x="731.67" y="63.5" >__gettimeofday</text>
+<title>__commpage_gettimeofday_internal (9 samples, 0.32%)</title><rect x="1006.5" y="37" width="3.8" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="1009.53" y="47.5" ></text>
 </g>
 <g >
-<title>time (372 samples, 98.94%)</title><rect x="22.6" y="85" width="1167.4" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
-<text  x="25.55" y="95.5" >time</text>
+<title>fegetenv (42 samples, 1.49%)</title><rect x="940.3" y="69" width="17.6" height="15.0" fill="rgb(209,21,5)" rx="2" ry="2" />
+<text  x="943.34" y="79.5" ></text>
 </g>
 <g >
-<title>fesetenv (93 samples, 24.73%)</title><rect x="214.0" y="69" width="291.9" height="15.0" fill="rgb(232,125,29)" rx="2" ry="2" />
-<text  x="216.99" y="79.5" >fesetenv</text>
+<title>__commpage_gettimeofday_internal (36 samples, 1.28%)</title><rect x="1144.3" y="69" width="15.1" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="1147.34" y="79.5" ></text>
 </g>
 <g >
-<title>gettimeofday (218 samples, 57.98%)</title><rect x="505.9" y="69" width="684.1" height="15.0" fill="rgb(231,124,29)" rx="2" ry="2" />
-<text  x="508.85" y="79.5" >gettimeofday</text>
+<title>__gettimeofday (758 samples, 26.91%)</title><rect x="615.3" y="53" width="317.5" height="15.0" fill="rgb(254,228,54)" rx="2" ry="2" />
+<text  x="618.29" y="63.5" >__gettimeofday</text>
 </g>
 <g >
-<title>start (376 samples, 100.00%)</title><rect x="10.0" y="181" width="1180.0" height="15.0" fill="rgb(208,18,4)" rx="2" ry="2" />
-<text  x="13.00" y="191.5" >start</text>
+<title>step_size_estimator (405 samples, 14.38%)</title><rect x="934.5" y="117" width="169.6" height="15.0" fill="rgb(249,205,49)" rx="2" ry="2" />
+<text  x="937.48" y="127.5" >step_size_estimator</text>
 </g>
 <g >
-<title>all (376 samples, 100%)</title><rect x="10.0" y="197" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
-<text  x="13.00" y="207.5" ></text>
+<title>gettimeofday (1 samples, 0.04%)</title><rect x="1103.7" y="53" width="0.4" height="15.0" fill="rgb(231,124,29)" rx="2" ry="2" />
+<text  x="1106.71" y="63.5" ></text>
 </g>
 <g >
-<title>__commpage_gettimeofday_internal (8 samples, 2.13%)</title><rect x="50.8" y="69" width="25.1" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
-<text  x="53.80" y="79.5" >_..</text>
+<title>gettimeofday (111 samples, 3.94%)</title><rect x="1143.5" y="85" width="46.5" height="15.0" fill="rgb(231,124,29)" rx="2" ry="2" />
+<text  x="1146.50" y="95.5" >gett..</text>
 </g>
 <g >
-<title>shalom (376 samples, 100.00%)</title><rect x="10.0" y="149" width="1180.0" height="15.0" fill="rgb(253,222,53)" rx="2" ry="2" />
-<text  x="13.00" y="159.5" >shalom</text>
+<title>__commpage_gettimeofday_internal (90 samples, 3.19%)</title><rect x="1004.0" y="53" width="37.7" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="1007.01" y="63.5" >__c..</text>
 </g>
 <g >
-<title>fegetenv (44 samples, 11.70%)</title><rect x="75.9" y="69" width="138.1" height="15.0" fill="rgb(209,21,5)" rx="2" ry="2" />
-<text  x="78.90" y="79.5" >fegetenv</text>
+<title>__commpage_gettimeofday_internal (8 samples, 0.28%)</title><rect x="1144.3" y="53" width="3.4" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="1147.34" y="63.5" ></text>
+</g>
+<g >
+<title>busy_wait (2,207 samples, 78.35%)</title><rect x="10.0" y="101" width="924.5" height="15.0" fill="rgb(213,38,9)" rx="2" ry="2" />
+<text  x="13.00" y="111.5" >busy_wait</text>
+</g>
+<g >
+<title>__commpage_gettimeofday_internal (495 samples, 17.57%)</title><rect x="407.9" y="53" width="207.4" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="410.94" y="63.5" >__commpage_gettimeofday_int..</text>
+</g>
+<g >
+<title>mach_absolute_time (28 samples, 0.99%)</title><rect x="1147.7" y="53" width="11.7" height="15.0" fill="rgb(234,137,32)" rx="2" ry="2" />
+<text  x="1150.69" y="63.5" ></text>
+</g>
+<g >
+<title>gettimeofday (1,271 samples, 45.12%)</title><rect x="402.1" y="69" width="532.4" height="15.0" fill="rgb(231,124,29)" rx="2" ry="2" />
+<text  x="405.08" y="79.5" >gettimeofday</text>
+</g>
+<g >
+<title>fesetenv (52 samples, 1.85%)</title><rect x="1121.7" y="85" width="21.8" height="15.0" fill="rgb(232,125,29)" rx="2" ry="2" />
+<text  x="1124.72" y="95.5" >f..</text>
+</g>
+<g >
+<title>time (203 samples, 7.21%)</title><rect x="1105.0" y="101" width="85.0" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="1107.97" y="111.5" >time</text>
+</g>
+<g >
+<title>gradient_descent (2,612 samples, 92.72%)</title><rect x="10.0" y="133" width="1094.1" height="15.0" fill="rgb(241,168,40)" rx="2" ry="2" />
+<text  x="13.00" y="143.5" >gradient_descent</text>
+</g>
+<g >
+<title>mach_absolute_time (404 samples, 14.34%)</title><rect x="446.1" y="37" width="169.2" height="15.0" fill="rgb(234,137,32)" rx="2" ry="2" />
+<text  x="449.06" y="47.5" >mach_absolute_time</text>
+</g>
+<g >
+<title>busy_wait (2 samples, 0.07%)</title><rect x="1104.1" y="101" width="0.9" height="15.0" fill="rgb(213,38,9)" rx="2" ry="2" />
+<text  x="1107.13" y="111.5" ></text>
+</g>
+<g >
+<title>process_inputs (205 samples, 7.28%)</title><rect x="1104.1" y="133" width="85.9" height="15.0" fill="rgb(234,136,32)" rx="2" ry="2" />
+<text  x="1107.13" y="143.5" >process_in..</text>
+</g>
+<g >
+<title>mach_absolute_time (75 samples, 2.66%)</title><rect x="1010.3" y="37" width="31.4" height="15.0" fill="rgb(234,137,32)" rx="2" ry="2" />
+<text  x="1013.30" y="47.5" >ma..</text>
+</g>
+<g >
+<title>__commpage_gettimeofday_internal (48 samples, 1.70%)</title><rect x="426.0" y="37" width="20.1" height="15.0" fill="rgb(232,126,30)" rx="2" ry="2" />
+<text  x="428.95" y="47.5" ></text>
+</g>
+<g >
+<title>fegetenv (240 samples, 8.52%)</title><rect x="54.4" y="69" width="100.5" height="15.0" fill="rgb(209,21,5)" rx="2" ry="2" />
+<text  x="57.40" y="79.5" >fegetenv</text>
+</g>
+<g >
+<title>__gettimeofday (148 samples, 5.25%)</title><rect x="1041.7" y="53" width="62.0" height="15.0" fill="rgb(254,228,54)" rx="2" ry="2" />
+<text  x="1044.71" y="63.5" >__gett..</text>
+</g>
+<g >
+<title>time (2,183 samples, 77.49%)</title><rect x="20.1" y="85" width="914.4" height="15.0" fill="rgb(229,111,26)" rx="2" ry="2" />
+<text  x="23.05" y="95.5" >time</text>
+</g>
+<g >
+<title>start (2,817 samples, 100.00%)</title><rect x="10.0" y="165" width="1180.0" height="15.0" fill="rgb(208,18,4)" rx="2" ry="2" />
+<text  x="13.00" y="175.5" >start</text>
+</g>
+<g >
+<title>all (2,817 samples, 100%)</title><rect x="10.0" y="181" width="1180.0" height="15.0" fill="rgb(213,39,9)" rx="2" ry="2" />
+<text  x="13.00" y="191.5" ></text>
+</g>
+<g >
+<title>busy_wait (205 samples, 7.28%)</title><rect x="1104.1" y="117" width="85.9" height="15.0" fill="rgb(213,38,9)" rx="2" ry="2" />
+<text  x="1107.13" y="127.5" >busy_wait</text>
+</g>
+<g >
+<title>gettimeofday (4 samples, 0.14%)</title><rect x="932.8" y="53" width="1.7" height="15.0" fill="rgb(231,124,29)" rx="2" ry="2" />
+<text  x="935.80" y="63.5" ></text>
+</g>
+<g >
+<title>fegetenv (35 samples, 1.24%)</title><rect x="1107.1" y="85" width="14.6" height="15.0" fill="rgb(209,21,5)" rx="2" ry="2" />
+<text  x="1110.06" y="95.5" ></text>
 </g>
 </g>
 </svg>

@@ -8,3 +8,7 @@ echo "YSP: Finished compiling. Running example:"
 ./bin/example
 
 echo "Program finished. Results written to profiler.output.txt"
+echo "Generating Flame Graph"
+
+./flamegraph.pl profiler.output.txt > profiler.output.svg
+echo "Flame Graph stored into profiler.output.svg"
